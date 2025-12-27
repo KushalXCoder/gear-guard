@@ -35,8 +35,8 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx",
-    "app/(routes)/auth/login/page.jsx",
-    "app/(routes)/auth/sign-in/page.jsx"
+    "**/*.jsx",
+    "**/*.js"
   ],
   "exclude": [
     "node_modules"

@@ -174,6 +174,18 @@ export default function MaintenanceDashboard() {
                   <tr
                     key={request.id}
                     className="hover:bg-slate-50 transition-all duration-200 cursor-pointer"
+                    onClick={() => {
+                      const params = new URLSearchParams({
+                        id: request.id,
+                        subject: request.subject, // Mapping equipment to subject as per plan
+                        equipment: request.equipment.name,
+                        technician: request.technician.name,
+                        category: request.category,
+                        status: request.status === 'pending' ? 'New' : 'In Progress', // Mapping status
+                        priority: request.priority
+                      });
+                      router.push(`/maintainance-request?${params.toString()}`);
+                    }}
                   >
                     <td className="px-6 py-4 text-sm font-medium text-slate-900 truncate">{request.subject}</td>
                     <td className="px-6 py-4 text-sm text-slate-700">{request.technician.name}</td>

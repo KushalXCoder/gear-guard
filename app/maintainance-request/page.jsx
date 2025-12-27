@@ -1,4 +1,5 @@
-'use client'
+"use client";
+
 import React, { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -53,18 +54,18 @@ export default function MaintenanceRequestPage() {
 
     const [activeTab, setActiveTab] = useState('notes');
     const [formData, setFormData] = useState({
-        subject: getParam('subject', "Test activity"),
+        subject: getParam("subject", "Test activity"),
         maintenanceFor: "Internal Maintenance",
-        equipment: getParam('equipment', "Acer Laptop / LP/203/19281928"),
-        category: getParam('category', "Computers"),
-        requestDate: "2025-12-18",
+        equipment: getParam("equipment", ""),
+        category: getParam("category", ""),
+        requestDate: getParam("requestDate", "2025-12-18"),
         maintenanceType: "Corrective",
-        team: "Watchful Octopus",
-        technician: getParam('technician', "Graceful Clam"),
-        scheduledDate: "2025-12-28T14:30",
-        duration: "02:00",
-        priority: getParam('priority', "Medium"),
-        status: getParam('status', "New") // Mapping status might be needed to match exact strings
+        team: getParam("team", ""),
+        technician: getParam("technician", ""),
+        scheduledDate: getParam("scheduledDate", ""),
+        duration: getParam("duration", ""),
+        priority: Number(getParam("priority", 2)), // ✅ cast to number
+        status: getParam("status", "New"),
     });
 
     // Overdue Logic

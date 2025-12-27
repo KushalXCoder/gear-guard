@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
     Users,
     ChevronRight,
@@ -11,6 +12,7 @@ import {
 } from 'lucide-react';
 
 export default function TeamsPage() {
+    const router = useRouter();
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -104,11 +106,10 @@ export default function TeamsPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {filteredTeams.map((team) => (
-                                <Link
+                                <tr
                                     key={team._id}
-                                    href={`/teams/${team._id}`}
-                                    component="tr" // Link behavior on row
-                                    className="group hover:bg-slate-50 transition-colors cursor-pointer block md:table-row"
+                                    onClick={() => router.push(`/teams/${team._id}`)}
+                                    className="group hover:bg-slate-50 transition-colors cursor-pointer"
                                 >
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-3">
@@ -155,7 +156,7 @@ export default function TeamsPage() {
                                     <td className="px-6 py-4 text-right">
                                         <ChevronRight size={18} className="text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
                                     </td>
-                                </Link>
+                                </tr>
                             ))}
                         </tbody>
                     </table>

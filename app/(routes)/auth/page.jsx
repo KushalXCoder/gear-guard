@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AuthPage() {
+  const { login, signup } = useAuth();
   const [mode, setMode] = useState('login');
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -24,6 +27,10 @@ export default function AuthPage() {
 
   const validateForm = () => {
     const newErrors = {};
+
+    if (!isLogin && !formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
 
     if (!formData.email) {
       newErrors.email = 'Email is required';
@@ -52,7 +59,7 @@ export default function AuthPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -61,30 +68,39 @@ export default function AuthPage() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
     setMessage({ type: '', text: '' });
 
-    // Mock API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setMessage({
-        type: 'success',
-        text: isLogin 
-          ? 'Login successful! Redirecting...' 
-          : 'Account created successfully! Please login.'
+    if (isLogin) {
+      const result = await login(formData.email, formData.password);
+      if (result.success) {
+        setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+      } else {
+        setMessage({ type: 'error', text: result.error });
+      }
+    } else {
+      const result = await signup({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
       });
-      
-      if (!isLogin) {
+
+      if (result.success) {
+        setMessage({ type: 'success', text: 'Account created successfully! Please login.' });
         setTimeout(() => {
           setMode('login');
-          setFormData({ email: formData.email, password: '', confirmPassword: '' });
+          setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
           setMessage({ type: '', text: '' });
         }, 1500);
+      } else {
+        setMessage({ type: 'error', text: result.error });
       }
-    }, 1500);
+    }
+
+    setIsLoading(false);
   };
 
   const handleKeyPress = (e) => {
@@ -123,21 +139,19 @@ export default function AuthPage() {
           <div className="flex border-b border-gray-200">
             <button
               onClick={() => switchMode('login')}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                isLogin
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${isLogin
+                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
             >
               Login
             </button>
             <button
               onClick={() => switchMode('signup')}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                !isLogin
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${!isLogin
+                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
             >
               Sign Up
             </button>
@@ -147,17 +161,40 @@ export default function AuthPage() {
           <div className="p-6">
             {message.text && (
               <div
-                className={`mb-4 p-3 rounded-lg text-sm ${
-                  message.type === 'success'
-                    ? 'bg-green-50 text-green-800 border border-green-200'
-                    : 'bg-red-50 text-red-800 border border-red-200'
-                }`}
+                className={`mb-4 p-3 rounded-lg text-sm ${message.type === 'success'
+                  ? 'bg-green-50 text-green-800 border border-green-200'
+                  : 'bg-red-50 text-red-800 border border-red-200'
+                  }`}
               >
                 {message.text}
               </div>
             )}
 
             <div className="space-y-4">
+              {/* Full Name Field (Signup only) */}
+              {!isLogin && (
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.name
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                      }`}
+                    placeholder="John Doe"
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
+                </div>
+              )}
+
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -170,11 +207,10 @@ export default function AuthPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                    errors.email
-                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.email
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                    }`}
                   placeholder="you@example.com"
                 />
                 {errors.email && (
@@ -195,11 +231,10 @@ export default function AuthPage() {
                     value={formData.password}
                     onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors pr-10 ${
-                      errors.password
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors pr-10 ${errors.password
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                      }`}
                     placeholder="Enter your password"
                   />
                   <button
@@ -238,11 +273,10 @@ export default function AuthPage() {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       onKeyPress={handleKeyPress}
-                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors pr-10 ${
-                        errors.confirmPassword
-                          ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                          : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors pr-10 ${errors.confirmPassword
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                        }`}
                       placeholder="Confirm your password"
                     />
                     <button
@@ -284,11 +318,10 @@ export default function AuthPage() {
               <button
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className={`w-full py-2.5 px-4 rounded-lg font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                  isLoading
-                    ? 'bg-blue-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
-                }`}
+                className={`w-full py-2.5 px-4 rounded-lg font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isLoading
+                  ? 'bg-blue-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
+                  }`}
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center">

@@ -4,18 +4,12 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Wrench, Menu, X } from "lucide-react";
 import { useState } from "react";
-
-// TEMP: replace this with real auth (NextAuth / JWT / Supabase)
-const useAuth = () => {
-  const isLoggedIn = false;
-  const user = { username: "Nirav" };
-  return { isLoggedIn, user };
-};
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn, user } = useAuth();
+  const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const tabs = [
@@ -54,11 +48,10 @@ export default function Navbar() {
                   <Link
                     key={tab.name}
                     href={tab.path}
-                    className={`py-3 px-1 border-b-2 text-base font-semibold transition-all duration-200 ease-out ${
-                      isActive
-                        ? "border-indigo-600 text-indigo-600"
-                        : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
+                    className={`py-3 px-1 border-b-2 text-base font-semibold transition-all duration-200 ease-out ${isActive
+                      ? "border-indigo-600 text-indigo-600"
+                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      }`}
                   >
                     {tab.name}
                   </Link>
@@ -69,7 +62,7 @@ export default function Navbar() {
 
           {/* RIGHT: Desktop Auth Section */}
           <div className="hidden md:flex items-center gap-4 ml-auto">
-            {!isLoggedIn ? (
+            {!user ? (
               <>
                 <Link
                   href="/auth"
@@ -87,13 +80,13 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-slate-700">
-                  Hi, {user.username}
+                  Hi, {user.name}
                 </span>
                 <button
-                  onClick={() => router.push("/profile")}
-                  className="px-3 py-1.5 text-sm border rounded-md hover:bg-slate-100"
+                  onClick={logout}
+                  className="px-3 py-1.5 text-sm border border-red-200 text-red-600 rounded-md hover:bg-red-50"
                 >
-                  Profile
+                  Logout
                 </button>
               </div>
             )}
@@ -119,9 +112,8 @@ export default function Navbar() {
 
       {/* MOBILE: Dropdown Menu */}
       <div
-        className={`md:hidden bg-white border-b border-slate-200 shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`md:hidden bg-white border-b border-slate-200 shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="px-4 py-2 space-y-1">
           {tabs.map((tab) => {
@@ -134,11 +126,10 @@ export default function Navbar() {
                 key={tab.name}
                 href={tab.path}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive
-                    ? "bg-indigo-50 text-indigo-600"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-                }`}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${isActive
+                  ? "bg-indigo-50 text-indigo-600"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  }`}
               >
                 {tab.name}
               </Link>
@@ -148,7 +139,7 @@ export default function Navbar() {
 
         <div className="pt-4 pb-4 border-t border-slate-200">
           <div className="px-4 space-y-3">
-            {!isLoggedIn ? (
+            {!user ? (
               <>
                 <Link
                   href="/auth"
@@ -168,16 +159,16 @@ export default function Navbar() {
             ) : (
               <div className="px-3 space-y-3">
                 <div className="text-base font-medium text-slate-800">
-                  Signed in as {user.username}
+                  Signed in as {user.name}
                 </div>
                 <button
                   onClick={() => {
-                    router.push("/profile");
+                    logout();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="block w-full text-left text-base font-medium text-slate-600 hover:text-slate-900"
+                  className="block w-full text-left text-base font-medium text-red-600 hover:text-red-700"
                 >
-                  Your Profile
+                  Logout
                 </button>
               </div>
             )}

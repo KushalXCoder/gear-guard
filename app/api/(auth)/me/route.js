@@ -8,11 +8,17 @@ export async function GET(req) {
         await connectToDatabase();
 
         const authHeader = req.headers.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
+        let token;
+
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.split(' ')[1];
+        } else {
+            token = req.cookies.get('auth_token')?.value;
         }
 
-        const token = authHeader.split(' ')[1];
+        if (!token) {
+            return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
+        }
         const secret = new TextEncoder().encode(process.env.JWT_SECRET);
         const { payload } = await jwtVerify(token, secret);
 

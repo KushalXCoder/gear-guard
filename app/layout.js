@@ -13,14 +13,18 @@ export const metadata = {
   description: "Protect your gear, track your assets, and stay secure with Gear Guard.",
 };
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
         className={`${roboto.variable} antialiased`}
       >
-        <Navbar />
-        {children}
+        <AuthProvider>
+          <Navbar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,4 +1,4 @@
-import { connectToDatabase } from '@/app/api/lib/db.js';
+import connectToDatabase from '@/app/api/lib/db.js';
 import User from '@/app/api/models/User.models.js';
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';

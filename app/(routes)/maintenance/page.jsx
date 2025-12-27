@@ -257,23 +257,7 @@ const CalendarSidebar = ({ currentDate, onDateSelect }) => {
         </div>
       </div>
 
-      <div className="pt-4 border-t border-slate-200">
-        <h4 className="text-xs font-semibold text-slate-900 mb-3">Event Types</h4>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-blue-500" />
-            <span className="text-xs text-slate-700">Preventive</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-orange-500" />
-            <span className="text-xs text-slate-700">Corrective</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-red-500" />
-            <span className="text-xs text-slate-700">Overdue</span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

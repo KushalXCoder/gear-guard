@@ -10,18 +10,51 @@ export async function POST(req) {
 
         const user = await User.findOne({ email });
         if (!user || !(await user.comparePassword(password))) {
-            return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+            return NextResponse.json(
+                { message: 'Invalid email or password' },
+                { status: 401 }
+            );
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign(
+            {
+                id: user._id,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
 
-        return NextResponse.json({
-            status: 'success',
-            token,
-            user: { id: user._id, name: user.name, email: user.email, role: user.role }
-        }, { status: 200 });
+        const response = NextResponse.json(
+            {
+                status: 'success',
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }
+            },
+            { status: 200 }
+        );
+
+        response.cookies.set('auth_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 24,
+            path: '/'
+        });
+
+        return response;
 
     } catch (error) {
-        return NextResponse.json({ message: 'Something went wrong while logging in', error: error.message }, { status: 500 });
+        return NextResponse.json(
+            {
+                message: 'Something went wrong while logging in',
+                error: error.message
+            },
+            { status: 500 }
+        );
     }
 }

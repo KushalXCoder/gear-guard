@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, AlertTriangle, Users, CheckCircle, Clock, Calendar, FileText, Plus, Filter } from 'lucide-react';
 
@@ -39,7 +38,7 @@ export default function MaintenanceDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 font-primary">
       {/* Header */}
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -50,7 +49,7 @@ export default function MaintenanceDashboard() {
             </div>
             <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200">
               <Plus size={18} />
-              <span className="font-medium">New Request</span>
+              <span onClick={() => router.push("/maintainance-request/new")} className="font-medium">New Request</span>
             </button>
           </div>
         </div>

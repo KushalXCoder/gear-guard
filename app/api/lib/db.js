@@ -8,12 +8,22 @@ if (!MONGODB_URI) {
 
 let cached = global.mongoose || { conn: null, promise: null };
 
-export async function connectToDatabase() {
+export default async function connectToDatabase() {
     if (cached.conn) return cached.conn;
 
     if (!cached.promise) {
-        cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => mongoose);
+        cached.promise = mongoose
+            .connect(MONGODB_URI)
+            .then((mongoose) => {
+                console.log('MongoDB connected');
+                return mongoose;
+            })
+            .catch((error) => {
+                console.error('MongoDB connection error:', error);
+                throw error;
+            });
     }
+
     cached.conn = await cached.promise;
     return cached.conn;
 }

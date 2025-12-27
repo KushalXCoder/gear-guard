@@ -16,12 +16,19 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', async function () {
     if (!this.isModified('password')) return;
+    if (this.password.startsWith('$2')) return;
     this.password = await bcrypt.hash(this.password, 12);
 });
 
+
 userSchema.methods.comparePassword = async function (candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
+    const storedPassword = this.password;
+    if (storedPassword.startsWith('$2')) {
+        return await bcrypt.compare(candidatePassword, storedPassword);
+    }
+    return storedPassword === candidatePassword;
 };
+
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default User;

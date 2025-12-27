@@ -51,7 +51,6 @@ export default function GearGuardKanban() {
 
         setTasks(prev => prev.map(task => {
             if (task.id === draggedTaskId) {
-                // Business Logic: If moved to Scrap, you might trigger an alert here
                 return { ...task, stage: targetStage };
             }
             return task;

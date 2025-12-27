@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from 'react';
-import { Wrench, Calendar, BarChart3, Users, CheckCircle, ArrowRight, Menu, X } from 'lucide-react';
+import { Wrench, Calendar, BarChart3, Users, CheckCircle, ArrowRight } from 'lucide-react';
 
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const features = [
     {
@@ -40,47 +38,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 font-primary">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Wrench className="w-8 h-8 text-blue-600" />
-              <span className="text-2xl font-bold text-slate-900">GearGuard</span>
-            </div>
-            
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-slate-600 hover:text-slate-900 transition">Features</a>
-              <a href="#benefits" className="text-slate-600 hover:text-slate-900 transition">Benefits</a>
-              <a href="#contact" className="text-slate-600 hover:text-slate-900 transition">Contact</a>
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                Get Started
-              </button>
-            </div>
 
-            <button 
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t">
-            <div className="px-4 py-3 space-y-3">
-              <a href="#features" className="block text-slate-600 hover:text-slate-900">Features</a>
-              <a href="#benefits" className="block text-slate-600 hover:text-slate-900">Benefits</a>
-              <a href="#contact" className="block text-slate-600 hover:text-slate-900">Contact</a>
-              <button className="w-full bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                Get Started
-              </button>
-            </div>
-          </div>
-        )}
-      </nav>
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">

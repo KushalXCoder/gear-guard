@@ -2,9 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { Search, AlertTriangle, Users, CheckCircle, Clock, Calendar, FileText, Plus, Filter } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function MaintenanceDashboard() {
   const router = useRouter();
+  const [tasks, setTasks] = useState([]);
 
 
   const criticalEquipment = [
@@ -36,6 +38,24 @@ export default function MaintenanceDashboard() {
     { id: 3, action: 'Updated status: Generator repair in progress', user: 'Sarah Chen', time: '2 hours ago' },
     { id: 4, action: 'Equipment health alert: Hydraulic Press #3', user: 'System', time: '3 hours ago' }
   ];
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch('/api/tasks');
+        const data = await res.json();
+        console.log('Fetched Tasks:', data);
+        setTasks(data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    }
+    fetchTasks();
+  }, []);
+
+  useEffect(() => {
+    console.log('Tasks state updated:', tasks);
+  }, [tasks]);
 
   return (
     <div className="min-h-screen bg-slate-50 font-primary">
@@ -117,112 +137,6 @@ export default function MaintenanceDashboard() {
           </div>
         </div>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Critical Equipment Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div className="p-6 border-b border-slate-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Critical Equipment</h2>
-                <span className="text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-                  {criticalEquipment.length} units
-                </span>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
-                      Equipment
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
-                      Health
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {criticalEquipment.map((equipment) => (
-                    <tr key={equipment.id} className="hover:bg-slate-50 transition-all duration-200">
-                      <td className="px-6 py-4 text-sm font-medium text-slate-900">{equipment.name}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-red-500 rounded-full"
-                              style={{ width: `${equipment.health}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-medium text-slate-700">{equipment.health}%</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700">
-                          Critical
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Technician Load */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div className="p-6 border-b border-slate-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Technician Load</h2>
-                <span className="text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-                  {technicianLoad.length} technicians
-                </span>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
-                      Technician
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
-                      Utilization
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">
-                      Tasks
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {technicianLoad.map((tech) => (
-                    <tr key={tech.id} className="hover:bg-slate-50 transition-all duration-200">
-                      <td className="px-6 py-4 text-sm font-medium text-slate-900">{tech.name}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${tech.utilization >= 80 ? 'bg-amber-500' : 'bg-blue-500'
-                                }`}
-                              style={{ width: `${tech.utilization}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-medium text-slate-700">{tech.utilization}%</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-slate-700">{tech.tasks}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
         {/* Open Requests Table */}
         <div className="mt-6 bg-white rounded-xl border border-slate-200 shadow-sm">
           <div className="p-6 border-b border-slate-200">
@@ -256,25 +170,13 @@ export default function MaintenanceDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {openRequests.map((request) => (
+                {tasks.map((request) => (
                   <tr
                     key={request.id}
-                    onClick={() => {
-                      const params = new URLSearchParams({
-                        id: request.id,
-                        subject: request.equipment, // Mapping equipment to subject as per plan
-                        equipment: request.equipment,
-                        technician: request.technician,
-                        category: request.category,
-                        status: request.status === 'pending' ? 'New' : 'In Progress', // Mapping status
-                        priority: request.priority.charAt(0).toUpperCase() + request.priority.slice(1)
-                      });
-                      router.push(`/maintainance-request?${params.toString()}`);
-                    }}
                     className="hover:bg-slate-50 transition-all duration-200 cursor-pointer"
                   >
-                    <td className="px-6 py-4 text-sm font-medium text-slate-900">{request.equipment}</td>
-                    <td className="px-6 py-4 text-sm text-slate-700">{request.technician}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-slate-900 truncate">{request.subject}</td>
+                    <td className="px-6 py-4 text-sm text-slate-700">{request.technician.name}</td>
                     <td className="px-6 py-4 text-sm text-slate-700">{request.category}</td>
                     <td className="px-6 py-4">
                       <span
@@ -288,46 +190,25 @@ export default function MaintenanceDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${request.priority === 'high'
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${request.priority === '3'
                           ? 'bg-red-50 text-red-700'
-                          : request.priority === 'medium'
+                          : request.priority === '2'
                             ? 'bg-amber-50 text-amber-700'
                             : 'bg-slate-100 text-slate-700'
                           }`}
                       >
-                        {request.priority.charAt(0).toUpperCase() + request.priority.slice(1)}
+                        {request.priority === '3'
+                          ? 'High'
+                          : request.priority === '2'
+                            ? 'Medium'
+                            : 'Low'
+                        }
                       </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="mt-6 bg-white rounded-xl border border-slate-200 shadow-sm">
-          <div className="p-6 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900">Recent Activity</h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-4 p-4 rounded-lg hover:bg-slate-50 transition-all duration-200">
-                  <div className="p-2 bg-indigo-50 rounded-lg">
-                    <Clock className="text-indigo-600" size={18} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-slate-900">{activity.action}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-slate-600">{activity.user}</span>
-                      <span className="text-xs text-slate-400">•</span>
-                      <span className="text-xs text-slate-500">{activity.time}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </main>

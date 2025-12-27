@@ -102,9 +102,9 @@ export default function MaintenanceDashboard() {
                   <AlertTriangle className="text-red-600" size={24} />
                 </div>
               </div>
-              <h3 className="text-3xl font-bold text-slate-900 mb-1">5 Units</h3>
+              <h3 className="text-3xl font-bold text-slate-900 mb-1">3 Units</h3>
               <p className="text-red-600 font-medium">Critical Equipment</p>
-              <p className="text-sm text-slate-600 mt-2">(Health &lt; 30%)</p>
+              <p className="text-sm text-slate-600 mt-2">(Health &lt; 39%)</p>
             </div>
           </div>
 
@@ -116,9 +116,9 @@ export default function MaintenanceDashboard() {
                   <Users className="text-blue-600" size={24} />
                 </div>
               </div>
-              <h3 className="text-3xl font-bold text-slate-900 mb-1">85% Utilized</h3>
+              <h3 className="text-3xl font-bold text-slate-900 mb-1">65% Utilized</h3>
               <p className="text-blue-600 font-medium">Technician Load</p>
-              <p className="text-sm text-slate-600 mt-2">(Assign Carefully)</p>
+              <p className="text-sm text-slate-600 mt-2">(Assign more tasks)</p>
             </div>
           </div>
 
@@ -126,13 +126,13 @@ export default function MaintenanceDashboard() {
           <div className="bg-white rounded-xl border border-green-100 shadow-sm hover:shadow-md transition-all duration-200">
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-green-50 rounded-lg">
-                  <CheckCircle className="text-green-600" size={24} />
+                <div className="p-3 bg-red-50 rounded-lg">
+                  <CheckCircle className="text-red-600" size={24} />
                 </div>
               </div>
               <h3 className="text-3xl font-bold text-slate-900 mb-1">12 Pending</h3>
-              <p className="text-green-600 font-medium">Open Requests</p>
-              <p className="text-sm text-slate-600 mt-2">3 Overdue</p>
+              <p className="text-red-600 font-medium">Open Requests</p>
+              <p className="text-sm text-slate-600 mt-2">0 Overdue</p>
             </div>
           </div>
         </div>

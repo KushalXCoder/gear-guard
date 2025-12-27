@@ -52,11 +52,13 @@ const maintenanceRequestSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ['New', 'In Progress', 'Repaired','Scrapped'],
-      default: 'New',
+      enum: ['Open', 'In Progress', 'Completed'],
+      default: 'Open',
     },
   },
   { timestamps: true }
 );
+
+// ✅ THIS IS THE IMPORTANT PART
 export default mongoose.models.MaintenanceRequest ||
-mongoose.model('MaintenanceRequest', maintenanceRequestSchema);
+  mongoose.model('MaintenanceRequest', maintenanceRequestSchema);

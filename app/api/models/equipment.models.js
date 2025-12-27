@@ -28,10 +28,6 @@ const equipmentSchema = new mongoose.Schema(
       enum: ['IT', 'Operations', 'Maintenance'],
     },
 
-    /**
-     * ✅ Employee is REQUIRED only for:
-     * Computer, Laptop, Desktop
-     */
     employee: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

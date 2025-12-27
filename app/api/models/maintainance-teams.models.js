@@ -5,6 +5,9 @@ const teamSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  companyName: {
+    type: String
+  },
   specialization: {
     type: String
   },

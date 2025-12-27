@@ -1,4 +1,9 @@
+"use client";
+
+import { useRouter } from 'next/navigation';
+
 export default function EquipmentTable({ equipment }) {
+  const router = useRouter();
   return (
     <div className="bg-white border rounded-xl shadow-sm overflow-x-auto">
       <table className="w-full text-sm">
@@ -26,7 +31,8 @@ export default function EquipmentTable({ equipment }) {
           {equipment.map((item) => (
             <tr
               key={item._id}
-              className="hover:bg-gray-50 transition"
+              onClick={() => router.push(`/equipment/${item._id}`)}
+              className="cursor-pointer hover:bg-gray-50"
             >
               <td className="px-4 py-3 font-medium text-gray-900">
                 {item.name}

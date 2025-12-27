@@ -34,15 +34,10 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "**/*.ts",
-<<<<<<< HEAD
     "**/*.tsx",
-    "app/(routes)/auth/login/page.jsx",
-    "app/(routes)/auth/sign-in/page.jsx"
+    "**/*.jsx",
+    "**/*.js"
   ],
-=======
-    "**/*.tsx"
-, "app/(routes)/auth/page.jsx", "app/(routes)/auth/sign-in/page.jsx"  ],
->>>>>>> nirav
   "exclude": [
     "node_modules"
   ]

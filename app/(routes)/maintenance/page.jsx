@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Clock, User, Wrench } from 'lucide-react';
 
+import { useAuth } from '@/context/AuthContext';
+
 // Mock data for maintenance requests
 const mockEvents = [
   {
@@ -12,7 +14,8 @@ const mockEvents = [
     type: 'Preventive',
     equipmentName: 'CNC Machine #4',
     technician: 'Alex Foster',
-    color: '#3b82f6'
+    color: '#3b82f6',
+    department: 'Mechanical'
   },
   {
     id: '2',
@@ -22,7 +25,8 @@ const mockEvents = [
     type: 'Corrective',
     equipmentName: 'Hydraulic Press #3',
     technician: 'Sarah Chen',
-    color: '#f97316'
+    color: '#f97316',
+    department: 'Mechanical'
   },
   {
     id: '3',
@@ -32,7 +36,8 @@ const mockEvents = [
     type: 'Preventive',
     equipmentName: 'Generator',
     technician: 'Marcus Reid',
-    color: '#3b82f6'
+    color: '#3b82f6',
+    department: 'Electrical'
   },
   {
     id: '4',
@@ -42,7 +47,8 @@ const mockEvents = [
     type: 'Preventive',
     equipmentName: 'HVAC Unit',
     technician: 'Emily Torres',
-    color: '#3b82f6'
+    color: '#3b82f6',
+    department: 'HVAC'
   },
   {
     id: '5',
@@ -53,7 +59,8 @@ const mockEvents = [
     equipmentName: 'Conveyor Belt #5',
     technician: 'Alex Foster',
     color: '#ef4444',
-    isOverdue: true
+    isOverdue: true,
+    department: 'Mechanical'
   },
   {
     id: '6',
@@ -63,7 +70,8 @@ const mockEvents = [
     type: 'Preventive',
     equipmentName: 'Boiler Unit #1',
     technician: 'Sarah Chen',
-    color: '#3b82f6'
+    color: '#3b82f6',
+    department: 'Mechanical'
   },
   {
     id: '7',
@@ -73,7 +81,8 @@ const mockEvents = [
     type: 'Corrective',
     equipmentName: 'Forklift #4',
     technician: 'Marcus Reid',
-    color: '#f97316'
+    color: '#f97316',
+    department: 'Mechanical'
   }
 ];
 
@@ -556,6 +565,7 @@ End: ${event.end.toLocaleString()}`);
 const MaintenanceCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState('week');
+  const { user } = useAuth(); // Get user from AuthContext
 
   const handleToday = () => {
     setCurrentDate(new Date());
@@ -589,6 +599,15 @@ const MaintenanceCalendar = () => {
     setView(newView);
   };
 
+  // Filter Logic:
+  // 1. Must be 'Preventive'
+  // 2. If user has a department, event must match that department
+  const filteredEvents = mockEvents.filter(e => {
+    const isPreventive = e.type === 'Preventive';
+    const isTeamMatch = user?.department ? e.department === user.department : true;
+    return isPreventive && isTeamMatch;
+  });
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-6 py-8">
@@ -603,9 +622,9 @@ const MaintenanceCalendar = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
           {view === 'week' ? (
-            <WeekView currentDate={currentDate} events={mockEvents} />
+            <WeekView currentDate={currentDate} events={filteredEvents} />
           ) : (
-            <MonthView currentDate={currentDate} events={mockEvents} />
+            <MonthView currentDate={currentDate} events={filteredEvents} />
           )}
 
           <CalendarSidebar currentDate={currentDate} onDateSelect={handleDateSelect} />

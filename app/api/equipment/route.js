@@ -24,3 +24,15 @@ export async function POST(request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }
+
+export const getEquipmentList = async (req, res) => {
+  try {
+    const equipment = await Equipment.find({})
+      .select('name serialNumber category department')
+      .sort({ name: 1 });
+
+    res.status(200).json(equipment);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch equipment' });
+  }
+};

@@ -70,3 +70,30 @@ export async function DELETE(request, context) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const getEquipmentDetails = async (req, res) => {
+  try {
+    const equipment = await Equipment.findById(req.params.id)
+      .populate('assignedTechnician', 'name initials');
+
+    if (!equipment) {
+      return res.status(404).json({ message: 'Equipment not found' });
+    }
+
+    res.status(200).json({
+      equipmentId: equipment._id,
+      category: equipment.category,
+      department: equipment.department,
+      company: equipment.company,
+      technician: equipment.assignedTechnician
+        ? {
+            _id: equipment.assignedTechnician._id,
+            name: equipment.assignedTechnician.name,
+            initials: equipment.assignedTechnician.initials,
+          }
+        : null,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch equipment details' });
+  }
+};

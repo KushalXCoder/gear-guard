@@ -294,7 +294,6 @@ export default function MaintenanceRequestPage() {
                                 )}
                             </div>
                         </div>
-
                     </div>
 
                     {/* --- Footer Utility Actions --- */}

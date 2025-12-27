@@ -77,6 +77,7 @@ export default function AuthPage() {
     if (isLogin) {
       const result = await login(formData.email, formData.password);
       if (result.success) {
+        localStorage.setItem('name', result.user.name);
         setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
       } else {
         setMessage({ type: 'error', text: result.error });
@@ -89,6 +90,7 @@ export default function AuthPage() {
       });
 
       if (result.success) {
+        localStorage.setItem('name', result.user.name);
         setMessage({ type: 'success', text: 'Account created successfully! Please login.' });
         setTimeout(() => {
           setMode('login');

@@ -13,12 +13,16 @@ import {
 import Link from 'next/link';
 // ... imports
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function TeamDetailPage({ params: paramsPromise }) {
     const params = use(paramsPromise);
     const router = useRouter();
+    const { user } = useAuth();
     const [team, setTeam] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const isAdmin = user?.role === 'admin';
 
     // Modals & Search State
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -79,7 +83,7 @@ export default function TeamDetailPage({ params: paramsPromise }) {
         try {
             const res = await fetch(`/api/teams/${params.id}`, {
                 method: 'DELETE',
-                headers: { 'x-user-role': 'admin' }
+                headers: { 'x-user-role': user?.role || '' }
             });
             if (res.ok) router.push('/teams');
         } catch (err) {
@@ -95,7 +99,7 @@ export default function TeamDetailPage({ params: paramsPromise }) {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-user-role': 'admin'
+                    'x-user-role': user?.role || ''
                 },
                 body: JSON.stringify({
                     ...team,
@@ -123,7 +127,7 @@ export default function TeamDetailPage({ params: paramsPromise }) {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-user-role': 'admin'
+                    'x-user-role': user?.role || ''
                 },
                 body: JSON.stringify({
                     ...team,
@@ -224,12 +228,14 @@ export default function TeamDetailPage({ params: paramsPromise }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setShowDeleteConfirm(true)}
-                            className="text-slate-400 hover:text-red-600 p-2 transition-colors"
-                        >
-                            <Trash2 size={18} />
-                        </button>
+                        {isAdmin && (
+                            <button
+                                onClick={() => setShowDeleteConfirm(true)}
+                                className="text-slate-400 hover:text-red-600 p-2 transition-colors"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -255,12 +261,14 @@ export default function TeamDetailPage({ params: paramsPromise }) {
                                 <h3 className="font-bold text-slate-700 flex items-center gap-2">
                                     <Shield size={18} className="text-teal-600" /> Authorized Technicians
                                 </h3>
-                                <button
-                                    onClick={() => setShowAddMember(true)}
-                                    className="text-[#00A09D] text-xs font-bold hover:underline flex items-center gap-1"
-                                >
-                                    <UserPlus size={14} /> Add Member
-                                </button>
+                                {isAdmin && (
+                                    <button
+                                        onClick={() => setShowAddMember(true)}
+                                        className="text-[#00A09D] text-xs font-bold hover:underline flex items-center gap-1"
+                                    >
+                                        <UserPlus size={14} /> Add Member
+                                    </button>
+                                )}
                             </div>
 
                             <div className="divide-y divide-slate-50">
@@ -283,12 +291,14 @@ export default function TeamDetailPage({ params: paramsPromise }) {
                                                 <div className="px-3 py-1 bg-slate-50 rounded text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
                                                     Technician
                                                 </div>
-                                                <button
-                                                    onClick={() => handleRemoveMember(member._id)}
-                                                    className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
-                                                >
-                                                    <Trash2 size={14} />
-                                                </button>
+                                                {isAdmin && (
+                                                    <button
+                                                        onClick={() => handleRemoveMember(member._id)}
+                                                        className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     ))

@@ -12,16 +12,28 @@ import {
     Plus
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CreateTeamPage() {
+    const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
+        companyName: '',
         specialization: '',
         members: [],
         isActive: true
     });
+
+    // Redirect non-admin users
+    useEffect(() => {
+        if (!authLoading && user?.role !== 'admin') {
+            router.push('/teams');
+        }
+    }, [user, authLoading, router]);
 
 
     const [userQuery, setUserQuery] = useState('');

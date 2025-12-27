@@ -9,11 +9,15 @@ import {
     Loader2,
     Search
 } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function TeamsPage() {
+    const { user } = useAuth();
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+
+    const isAdmin = user?.role === 'admin';
 
     // Fetch all teams on mount
     useEffect(() => {
@@ -62,11 +66,13 @@ export default function TeamsPage() {
                         <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Maintenance Teams</h1>
                         <p className="text-sm text-slate-500">Configure specialized workforces and technician assignments.</p>
                     </div>
-                    <Link href="/teams/new">
-                        <button className="bg-[#00A09D] hover:bg-[#008a87] text-white px-5 py-2.5 rounded-lg shadow-sm font-semibold text-sm transition-all flex items-center gap-2">
-                            <Plus size={18} /> Create Team
-                        </button>
-                    </Link>
+                    {isAdmin && (
+                        <Link href="/teams/new">
+                            <button className="bg-[#00A09D] hover:bg-[#008a87] text-white px-5 py-2.5 rounded-lg shadow-sm font-semibold text-sm transition-all flex items-center gap-2">
+                                <Plus size={18} /> Create Team
+                            </button>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Search & Stats Bar */}
